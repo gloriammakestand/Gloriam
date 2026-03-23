@@ -3,99 +3,81 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GLORIAM</title>  <style>
-    body {
-      margin:0;
-      font-family: Arial, sans-serif;
-      background:#000;
-      color:#fff;
-    }
+    body { margin:0; font-family: Arial, sans-serif; background:#000; color:#fff; overflow-x:hidden; }
 
     .hero {
       height:100vh;
       background:url('https://images.unsplash.com/photo-1523381210434-271e8be1f52b') center/cover no-repeat;
+      display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;
+    }
+
+    .hero h1 { font-size:48px; letter-spacing:6px; }
+    .btn { margin-top:20px; padding:12px 30px; background:#fff; color:#000; border:none; cursor:pointer; }
+
+    .section { padding:60px 20px; text-align:center; }
+
+    /* FORM MODERN */
+    .form-container {
+      position:fixed;
+      top:0; left:0;
+      width:100%; height:100%;
+      background:#000;
+      display:none;
+      overflow:hidden;
+      z-index:999;
+    }
+
+    .form-wrapper {
+      display:flex;
+      height:100%;
+      transition:0.5s;
+    }
+
+    .form-step {
+      min-width:100%;
       display:flex;
       flex-direction:column;
       justify-content:center;
       align-items:center;
       text-align:center;
       padding:20px;
-      background-blend-mode: darken;
     }
 
-    .hero h1 {
-      font-size:48px;
-      letter-spacing:6px;
+    .form-step h2 { margin-bottom:20px; }
+
+    input {
+      padding:12px;
+      width:80%;
+      max-width:300px;
+      border:none;
+      border-bottom:1px solid #fff;
+      background:transparent;
+      color:#fff;
+      text-align:center;
+      font-size:16px;
     }
 
-    .tagline {
-      opacity:0.8;
-      margin-top:10px;
-    }
-
-    .btn {
+    .nav-btn {
       margin-top:30px;
-      padding:14px 40px;
+      padding:10px 25px;
       background:#fff;
       color:#000;
       border:none;
-      font-weight:bold;
       cursor:pointer;
-      transition:0.3s;
-    }
-
-    .btn:hover {
-      background:#ccc;
-    }
-
-    .section {
-      padding:60px 20px;
-      text-align:center;
-    }
-
-    .product {
-      max-width:400px;
-      margin:auto;
-    }
-
-    .product h2 {
-      margin-bottom:10px;
-    }
-
-    .price {
-      margin:10px 0;
-      font-size:18px;
     }
 
     .gallery {
       display:grid;
       grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
       gap:10px;
-      margin-top:20px;
     }
 
-    .gallery img {
-      width:100%;
-      border-radius:10px;
-    }
-
-    footer {
-      text-align:center;
-      padding:20px;
-      font-size:12px;
-      opacity:0.6;
-    }
-  </style></head><body><!-- HERO --><div class="hero">
+    .gallery img { width:100%; border-radius:10px; }
+  </style></head><body><div class="hero">
   <h1>GLORIAM</h1>
-  <p class="tagline">SOCCER ADDICT COLLECTION</p>
-  <button class="btn" onclick="scrollToOrder()">ORDER NOW</button>
-</div><!-- PRODUCT --><div class="section" id="order">
-  <div class="product">
-    <h2>Soccer Addict T-Shirt</h2>
-    <p>Black / Green - Cotton Combed 20s</p>
-    <p class="price">Full: 110K | DP: 60K</p>
-    <button class="btn" onclick="order()">ORDER VIA WHATSAPP</button>
-  </div>
-</div><!-- GALLERY --><div class="section">
+  <p>SOCCER ADDICT COLLECTION</p>
+  <button class="btn" onclick="openForm()">ORDER NOW</button>
+</div><div class="section">
   <h2>OUR WORK</h2>
   <div class="gallery">
     <img src="https://images.unsplash.com/photo-1520975916090-3105956dac38">
@@ -103,21 +85,58 @@
     <img src="https://images.unsplash.com/photo-1520975922203-bc5c3b52d5a6">
     <img src="https://images.unsplash.com/photo-1516826957135-700dedea698c">
   </div>
-</div><footer>
-  © GLORIAM STORE
-</footer><script>
-function scrollToOrder(){
-  document.getElementById("order").scrollIntoView({behavior:"smooth"});
+</div><!-- FORM --><div class="form-container" id="form">
+  <div class="form-wrapper" id="wrapper"><div class="form-step">
+  <h2>Nama</h2>
+  <input id="nama" placeholder="Masukkan nama">
+  <button class="nav-btn" onclick="next()">Next</button>
+</div>
+
+<div class="form-step">
+  <h2>Alamat</h2>
+  <input id="alamat" placeholder="Alamat lengkap">
+  <button class="nav-btn" onclick="next()">Next</button>
+</div>
+
+<div class="form-step">
+  <h2>Size</h2>
+  <input id="size" placeholder="S / M / L / XL">
+  <button class="nav-btn" onclick="next()">Next</button>
+</div>
+
+<div class="form-step">
+  <h2>No HP</h2>
+  <input id="hp" placeholder="08xxxx">
+  <button class="nav-btn" onclick="next()">Next</button>
+</div>
+
+<div class="form-step">
+  <h2>Warna</h2>
+  <input id="warna" placeholder="Black / Green">
+  <button class="nav-btn" onclick="submitOrder()">Submit</button>
+</div>
+
+  </div>
+</div><script>
+let step = 0;
+
+function openForm() {
+  document.getElementById('form').style.display = 'block';
 }
 
-function order() {
-  const nama = prompt("Nama:");
-  const alamat = prompt("Alamat lengkap:");
-  const size = prompt("Size:");
-  const phone = prompt("No HP:");
-  const warna = prompt("Warna:");
+function next() {
+  step++;
+  document.getElementById('wrapper').style.transform = `translateX(-${step * 100}%)`;
+}
 
-  const text = `GLORIAM ORDER\n\nNama: ${nama}\nAlamat: ${alamat}\nSize: ${size}\nNo HP: ${phone}\nWarna: ${warna}\n\nPayment:\nMandiri 1370023790229\nDANA 081910421976\n\nNote: Sudah melakukan pembayaran`;
+function submitOrder() {
+  const nama = document.getElementById('nama').value;
+  const alamat = document.getElementById('alamat').value;
+  const size = document.getElementById('size').value;
+  const hp = document.getElementById('hp').value;
+  const warna = document.getElementById('warna').value;
+
+  const text = `GLORIAM ORDER\n\nNama: ${nama}\nAlamat: ${alamat}\nSize: ${size}\nNo HP: ${hp}\nWarna: ${warna}\n\nPayment:\nMandiri 1370023790229\nDANA 081910421976`;
 
   window.open("https://wa.me/6283898588562?text=" + encodeURIComponent(text));
 }
