@@ -3,29 +3,25 @@ const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR5wyzEXx
 let products = [];
 let cart = { prod: null, size: '', color: '' };
 
-// 1. AMBIL DATA
+// 1. AMBIL DATA DARI SHEETS
 async function initApp() {
     try {
         const response = await fetch(SHEET_CSV_URL);
         const csvText = await response.text();
         const rows = csvText.split('\n').map(r => r.trim()).filter(r => r !== '');
         
-        // Baca Header
         const header = rows[0].split(',').map(h => h.trim().toLowerCase().replace(/["']/g, ""));
         const getIdx = (name) => header.indexOf(name);
 
         products = rows.slice(1).map((row, index) => {
             const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.trim().replace(/^"|"$/g, ""));
-            
-            // Cek apakah kolom DP ada
-            const dVal = (getIdx('dp') !== -1) ? cols[getIdx('dp')] : "0";
-            const pVal = (getIdx('price') !== -1) ? cols[getIdx('price')] : "0";
+            if (cols.length < 5) return null;
 
             return {
                 id: parseInt(cols[getIdx('id')]) || (index + 1),
                 name: cols[getIdx('name')] || "Produk",
-                price: parseInt(pVal.replace(/[^\d]/g, "")) || 0,
-                dp: parseInt(dVal.replace(/[^\d]/g, "")) || 0,
+                price: parseInt((cols[getIdx('price')] || "0").replace(/[^\d]/g, "")),
+                dp: parseInt((cols[getIdx('dp')] || "0").replace(/[^\d]/g, "")) || 0,
                 badge: (cols[getIdx('badge')] || "ready").toLowerCase(),
                 status: cols[getIdx('status')] || "",
                 colors: (cols[getIdx('colors')] || "").split('/').map(i => i.trim()),
@@ -38,17 +34,38 @@ async function initApp() {
         renderHome();
         setTimeout(() => document.getElementById('loader').classList.add('hide'), 800);
     } catch (err) {
-        console.error("Gagal muat data:", err);
+        console.error(err);
     }
 }
 
-// 2. TAMPILAN KATALOG
+// 2. FUNGSI GETAR & PESAN ERROR (Haptic + Visual)
+function triggerError(msg) {
+    // A. GETAR HP (Haptic Feedback)
+    if (navigator.vibrate) {
+        navigator.vibrate([100, 50, 100]); // Pola: Getar, Diam, Getar
+    }
+
+    // B. GETAR LAYAR (Visual Shake)
+    const activePage = document.querySelector('.page.active');
+    if (activePage) {
+        activePage.classList.add('vibrate-screen');
+        // Hapus class getar setelah 0.3 detik supaya bisa diulang
+        setTimeout(() => activePage.classList.remove('vibrate-screen'), 300);
+    }
+
+    // C. MUNCULKAN TOAST/PESAN
+    const t = document.getElementById('toast');
+    t.innerText = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// 3. RENDER KATALOG
 function renderHome() {
     const container = document.getElementById('product-list');
     container.innerHTML = '';
     products.forEach(p => {
         const isSold = p.badge === 'sold';
-        // Label DP di Home
         const dpLabel = (p.dp > 0) ? `<span style="color:#ffeb3b; font-size:12px;"> (DP ${p.dp/1000}K)</span>` : '';
         
         container.innerHTML += `
@@ -63,28 +80,7 @@ function renderHome() {
     });
 }
 
-// 3. FUNGSI GETAR & ERROR
-function triggerError(msg) {
-    // GETAR HP
-    if (window.navigator && window.navigator.vibrate) {
-        window.navigator.vibrate([100, 50, 100]);
-    }
-
-    // GETAR LAYAR
-    const activePage = document.querySelector('.page.active');
-    if (activePage) {
-        activePage.classList.add('vibrate-screen');
-        setTimeout(() => activePage.classList.remove('vibrate-screen'), 300);
-    }
-
-    // TOAST
-    const t = document.getElementById('toast');
-    t.innerText = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2000);
-}
-
-// 4. DETAIL & VALIDASI (Sama seperti sebelumnya namun dipastikan ID-nya benar)
+// 4. DETAIL PRODUK
 function goDetail(id) {
     const p = products.find(x => x.id === id);
     cart = { prod: p, size: '', color: p.colors.length === 1 ? p.colors[0] : '' };
@@ -107,7 +103,7 @@ function goDetail(id) {
 }
 
 function selOpt(type, val, el) {
-    if (navigator.vibrate) navigator.vibrate(50); // Getar halus saat klik opsi
+    if (navigator.vibrate) navigator.vibrate(40); // Getar halus saat pilih
     cart[type] = val;
     el.parentElement.querySelectorAll('div').forEach(d => d.classList.remove('active'));
     el.classList.add('active');
@@ -118,8 +114,12 @@ function showPage(id) {
     document.getElementById(id).classList.add('active');
 }
 
+// 5. VALIDASI SEBELUM LANJUT (DISINI FITUR GETARNYA)
 function validateDetail() {
-    if(!cart.color || !cart.size) return triggerError("PILIH WARNA & UKURAN!");
+    // Jika warna atau ukuran belum dipilih, layar & hp getar
+    if(!cart.color || !cart.size) {
+        return triggerError("PILIH WARNA & UKURAN DULU!");
+    }
     showPage('form');
 }
 
@@ -127,11 +127,15 @@ function validateForm() {
     const n = document.getElementById('inName').value;
     const p = document.getElementById('inPhone').value;
     const a = document.getElementById('inAddress').value;
-    if(!n || !p || !a) return triggerError("LENGKAPI DATA!");
+
+    // Jika nama, nomor, atau alamat kosong, layar & hp getar
+    if(!n || !p || !a) {
+        return triggerError("LENGKAPI DATA PENGIRIMAN!");
+    }
     
     document.getElementById('sumProd').innerText = cart.prod.name;
     document.getElementById('sumVar').innerText = `${cart.color} / SIZE ${cart.size}`;
-    document.getElementById('sumPrice').innerText = (cart.prod.dp > 0) ? `DP: Rp ${cart.prod.dp.toLocaleString('id-ID')}` : `Total: Rp ${cart.prod.price.toLocaleString('id-ID')}`;
+    document.getElementById('sumPrice').innerText = (cart.prod.dp > 0) ? `Wajib DP: Rp ${cart.prod.dp.toLocaleString('id-ID')}` : `Total: Rp ${cart.prod.price.toLocaleString('id-ID')}`;
     document.getElementById('sumCust').innerHTML = `<strong>${n}</strong><br>${p}<br>${a}`;
     showPage('summary');
 }
