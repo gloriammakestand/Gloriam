@@ -3,25 +3,29 @@ const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR5wyzEXx
 let products = [];
 let cart = { prod: null, size: '', color: '' };
 
-// 1. SYNC DATA DARI GOOGLE SHEETS
+// 1. AMBIL DATA
 async function initApp() {
     try {
         const response = await fetch(SHEET_CSV_URL);
         const csvText = await response.text();
         const rows = csvText.split('\n').map(r => r.trim()).filter(r => r !== '');
         
+        // Baca Header
         const header = rows[0].split(',').map(h => h.trim().toLowerCase().replace(/["']/g, ""));
         const getIdx = (name) => header.indexOf(name);
 
         products = rows.slice(1).map((row, index) => {
             const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.trim().replace(/^"|"$/g, ""));
-            if (cols.length < 5) return null;
+            
+            // Cek apakah kolom DP ada
+            const dVal = (getIdx('dp') !== -1) ? cols[getIdx('dp')] : "0";
+            const pVal = (getIdx('price') !== -1) ? cols[getIdx('price')] : "0";
 
             return {
                 id: parseInt(cols[getIdx('id')]) || (index + 1),
                 name: cols[getIdx('name')] || "Produk",
-                price: parseInt((cols[getIdx('price')] || "0").replace(/[^\d]/g, "")),
-                dp: parseInt((cols[getIdx('dp')] || "0").replace(/[^\d]/g, "")) || 0,
+                price: parseInt(pVal.replace(/[^\d]/g, "")) || 0,
+                dp: parseInt(dVal.replace(/[^\d]/g, "")) || 0,
                 badge: (cols[getIdx('badge')] || "ready").toLowerCase(),
                 status: cols[getIdx('status')] || "",
                 colors: (cols[getIdx('colors')] || "").split('/').map(i => i.trim()),
@@ -34,41 +38,63 @@ async function initApp() {
         renderHome();
         setTimeout(() => document.getElementById('loader').classList.add('hide'), 800);
     } catch (err) {
-        triggerError("KONEKSI GAGAL!");
+        console.error("Gagal muat data:", err);
     }
 }
 
-// 2. RENDER HOME
+// 2. TAMPILAN KATALOG
 function renderHome() {
     const container = document.getElementById('product-list');
-    if(!container) return;
     container.innerHTML = '';
     products.forEach(p => {
         const isSold = p.badge === 'sold';
-        const dpTag = (p.dp > 0) ? `<span style="color:#ffeb3b; font-size:11px;"> (DP ${p.dp/1000}K)</span>` : '';
+        // Label DP di Home
+        const dpLabel = (p.dp > 0) ? `<span style="color:#ffeb3b; font-size:12px;"> (DP ${p.dp/1000}K)</span>` : '';
+        
         container.innerHTML += `
             <div class="card" onclick="${isSold ? 'triggerError(\'STOK HABIS!\')' : `goDetail(${p.id})`}">
                 <div class="badge ${p.badge}">${p.status}</div>
                 <img src="${p.thumbnail}">
                 <div style="padding:20px">
                     <h3 style="margin:0; font-size:18px;">${p.name}</h3>
-                    <p style="color:#00c853; font-weight:700; margin:8px 0;">Rp ${p.price.toLocaleString('id-ID')}${dpTag}</p>
+                    <p style="color:#00c853; font-weight:700; margin:8px 0;">Rp ${p.price.toLocaleString('id-ID')}${dpLabel}</p>
                 </div>
             </div>`;
     });
 }
 
-// 3. DETAIL & OPSI
+// 3. FUNGSI GETAR & ERROR
+function triggerError(msg) {
+    // GETAR HP
+    if (window.navigator && window.navigator.vibrate) {
+        window.navigator.vibrate([100, 50, 100]);
+    }
+
+    // GETAR LAYAR
+    const activePage = document.querySelector('.page.active');
+    if (activePage) {
+        activePage.classList.add('vibrate-screen');
+        setTimeout(() => activePage.classList.remove('vibrate-screen'), 300);
+    }
+
+    // TOAST
+    const t = document.getElementById('toast');
+    t.innerText = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// 4. DETAIL & VALIDASI (Sama seperti sebelumnya namun dipastikan ID-nya benar)
 function goDetail(id) {
     const p = products.find(x => x.id === id);
     cart = { prod: p, size: '', color: p.colors.length === 1 ? p.colors[0] : '' };
     
     document.getElementById('detName').innerText = p.name;
-    document.getElementById('detPrice').innerHTML = `Rp ${p.price.toLocaleString('id-ID')} ${(p.dp > 0 ? `<br><small style="color:#fbc02d">DP: Rp ${p.dp.toLocaleString('id-ID')}</small>` : '')}`;
+    document.getElementById('detPrice').innerHTML = `Rp ${p.price.toLocaleString('id-ID')} ${(p.dp > 0 ? `<br><small style="color:#fbc02d; font-weight:normal;">DP: Rp ${p.dp.toLocaleString('id-ID')}</small>` : '')}`;
     document.getElementById('detImgs').innerHTML = p.details.filter(i=>i!=="").map(i => `<img src="${i}">`).join('');
     
     let cHTML = `<div class="section-label">PILIH WARNA</div><div class="option-box">`;
-    p.colors.forEach(c => cHTML += `<div class="${cart.color === c ? 'active' : ''}" onclick="selOpt('color','${c}',this)">${c}</div>`);
+    p.colors.forEach(c => cHTML += `<div onclick="selOpt('color','${c}',this)">${c}</div>`);
     document.getElementById('colorArea').innerHTML = cHTML + `</div>`;
 
     let sHTML = `<div class="section-label">PILIH UKURAN</div><div class="option-box">`;
@@ -80,31 +106,8 @@ function goDetail(id) {
     showPage('detail');
 }
 
-// 4. EFEK GETAR (VIBRATE) & NAVIGASI
-function triggerError(msg) {
-    // 1. Getar HP (Haptic)
-    if (navigator.vibrate) {
-        navigator.vibrate([100, 50, 100]); // Pola getar: getar-diam-getar
-    }
-
-    // 2. Getar Layar (Visual)
-    const activePage = document.querySelector('.page.active');
-    activePage.classList.add('vibrate-screen'); 
-    
-    // 3. Munculkan Pesan
-    const t = document.getElementById('toast');
-    t.innerText = msg;
-    t.classList.add('show');
-
-    setTimeout(() => {
-        t.classList.remove('show');
-        activePage.classList.remove('vibrate-screen');
-    }, 2000);
-}
-
 function selOpt(type, val, el) {
-    // Getar halus saat pilih ukuran/warna
-    if (navigator.vibrate) navigator.vibrate(40); 
+    if (navigator.vibrate) navigator.vibrate(50); // Getar halus saat klik opsi
     cart[type] = val;
     el.parentElement.querySelectorAll('div').forEach(d => d.classList.remove('active'));
     el.classList.add('active');
@@ -113,7 +116,6 @@ function selOpt(type, val, el) {
 function showPage(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    window.scrollTo(0,0);
 }
 
 function validateDetail() {
