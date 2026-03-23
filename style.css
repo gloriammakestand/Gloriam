@@ -1,50 +1,232 @@
-* { box-sizing: border-box; }
-html, body { margin: 0; font-family: 'Montserrat', sans-serif; background: #000; color: #fff; overflow-x: hidden; }
+/* --- RESET & BASE --- */
+* {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
 
-/* UI COMPONENTS */
-.loader { position: fixed; inset: 0; background: #000; display: flex; justify-content: center; align-items: center; z-index: 10000; font-size: 24px; letter-spacing: 8px; font-weight: 700; transition: 0.5s; }
-.loader.hide { opacity: 0; pointer-events: none; }
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #0f0f0f; /* Tema Gelap */
+    color: #ffffff;
+    overflow-x: hidden;
+}
 
-.toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: #ff3b3b; color: #fff; padding: 14px 28px; border-radius: 50px; transition: 0.5s; z-index: 9999; font-weight: 700; font-size: 12px; }
-.toast.show { top: 30px; }
+/* --- ANIMASI GETAR LAYAR --- */
+.vibrate-screen {
+    animation: shakeLayar 0.3s cubic-bezier(.36,.07,.19,.97) both;
+}
 
-header { height: 40vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-header h1 { letter-spacing: 12px; font-size: 32px; margin: 0; }
-header p { font-size: 10px; opacity: 0.4; margin-top: 10px; letter-spacing: 2px; }
+@keyframes shakeLayar {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-8px); }
+    80% { transform: translateX(8px); }
+}
 
-/* PRODUCT LIST */
-.products { display: flex; flex-direction: column; align-items: center; gap: 30px; padding: 0 20px 120px; }
-.card { width: 100%; max-width: 400px; background: #0a0a0a; border-radius: 20px; border: 1px solid #1a1a1a; overflow: hidden; position: relative; }
-.card img { width: 100%; display: block; aspect-ratio: 1/1; object-fit: cover; }
-.badge { position: absolute; top: 15px; left: 15px; padding: 6px 14px; font-size: 10px; font-weight: 700; border-radius: 8px; z-index: 2; }
-.pre { background: #00c853; }
-.ready { background: #fff; color: #000; }
-.sold { background: #ff3b3b; }
+/* --- LOADER --- */
+#loader {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: #0f0f0f;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: 0.5s;
+}
 
-/* PAGES */
-.page { position: fixed; inset: 0; overflow-y: auto; background: #000; opacity: 0; transform: translateY(20px); transition: 0.4s; pointer-events: none; z-index: 1; }
-.page.active { opacity: 1; transform: translateY(0); pointer-events: auto; z-index: 10; }
+#loader.hide { opacity: 0; pointer-events: none; }
 
-.detail-container { max-width: 500px; margin: auto; padding: 20px 24px 160px; }
-.img-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 50px; }
-.img-grid img { width: 100%; border-radius: 12px; border: 1px solid #1a1a1a; }
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255,255,255,0.1);
+    border-top: 4px solid #00c853;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
 
-.section-label { margin-top: 25px; font-size: 11px; font-weight: 700; color: #555; letter-spacing: 1px; }
-.option-box { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
-.option-box div { padding: 15px; border: 1.5px solid #1a1a1a; text-align: center; border-radius: 10px; cursor: pointer; font-size: 13px; font-weight: 600; }
-.option-box div.active { background: #fff; color: #000; border-color: #fff; }
-.option-box div.disabled { opacity: 0.2; cursor: not-allowed; text-decoration: line-through; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-/* FORMS */
-.input-group { margin-bottom: 20px; }
-.input-group label { display: block; font-size: 11px; font-weight: 700; color: #888; margin-bottom: 8px; }
-input, textarea { width: 100%; padding: 15px; background: #0a0a0a; border: 1.5px solid #1a1a1a; color: #fff; border-radius: 12px; font-family: inherit; }
+/* --- PAGE SYSTEM --- */
+.page {
+    display: none;
+    padding: 20px;
+    min-height: 100vh;
+}
 
-.summary-box { background: #0a0a0a; padding: 20px; border-radius: 15px; border: 1px solid #1a1a1a; }
-.payment-card { background: #0a0a0a; border: 2px solid #1a1a1a; padding: 20px; border-radius: 20px; margin-top: 20px; }
-.bank-info { font-size: 15px; line-height: 1.6; font-weight: 600; margin: 10px 0; }
+.page.active { display: block; }
 
-/* BUTTONS */
-button { background: #fff; color: #000; border: none; padding: 18px; width: 100%; font-weight: 700; border-radius: 12px; cursor: pointer; }
-.sticky-btn { position: fixed; bottom: 0; left: 0; width: 100%; padding: 20px; background: linear-gradient(transparent, #000 40%); z-index: 100; }
-.back-btn { position: fixed; top: 20px; left: 20px; z-index: 150; font-weight: 700; font-size: 11px; padding: 8px 12px; background: rgba(255,255,255,0.1); border-radius: 8px; cursor: pointer; }
+/* --- HOME PAGE --- */
+.header {
+    text-align: center;
+    padding: 40px 0 20px;
+}
+
+.header h1 { margin: 0; font-size: 28px; letter-spacing: 4px; color: #00c853; }
+.header p { margin: 5px 0; opacity: 0.5; font-size: 12px; }
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2 Kolom di HP */
+    gap: 15px;
+    padding: 10px;
+}
+
+/* --- PRODUCT CARD --- */
+.card {
+    background: #1a1a1a;
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative;
+    transition: 0.3s;
+    border: 1px solid #222;
+}
+
+.card:active { transform: scale(0.95); }
+
+.card img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+}
+
+/* --- BADGE SYSTEM --- */
+.badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 4px 10px;
+    font-size: 10px;
+    font-weight: 800;
+    border-radius: 5px;
+    text-transform: uppercase;
+    z-index: 2;
+}
+
+.badge.pre { background: #fbc02d; color: #000; }     /* Kuning - PO */
+.badge.ready { background: #00c853; color: #fff; }   /* Hijau - Ready */
+.badge.sold { background: #ff5252; color: #fff; }    /* Merah - Habis */
+
+/* --- DETAIL PAGE --- */
+.back-btn {
+    padding: 10px 0;
+    font-weight: 700;
+    cursor: pointer;
+    color: #00c853;
+}
+
+.detail-container { padding-bottom: 100px; }
+
+.img-grid {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    scroll-snap-type: x mandatory;
+}
+
+.img-grid img {
+    width: 100%;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    border-radius: 15px;
+}
+
+/* --- OPTION BOXES (Warna & Size) --- */
+.section-label {
+    font-size: 12px;
+    font-weight: 700;
+    margin: 25px 0 10px;
+    opacity: 0.6;
+}
+
+.option-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.option-box div {
+    padding: 12px 20px;
+    background: #1a1a1a;
+    border: 2px solid #333;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.option-box div.active {
+    border-color: #00c853;
+    background: rgba(0, 200, 83, 0.1);
+}
+
+.option-box div.disabled {
+    opacity: 0.2;
+    text-decoration: line-through;
+}
+
+/* --- FORMS --- */
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; font-size: 12px; margin-bottom: 8px; opacity: 0.6; }
+input, textarea {
+    width: 100%;
+    padding: 15px;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 16px;
+}
+
+/* --- SUMMARY BOX --- */
+.summary-box {
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 15px;
+    border-left: 4px solid #00c853;
+}
+
+/* --- STICKY BUTTON --- */
+.sticky-btn {
+    position: fixed;
+    bottom: 0; left: 0; width: 100%;
+    padding: 20px;
+    background: linear-gradient(transparent, #0f0f0f 30%);
+    z-index: 10;
+}
+
+button {
+    width: 100%;
+    padding: 18px;
+    border: none;
+    border-radius: 12px;
+    background: #00c853;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+button:active { transform: scale(0.98); opacity: 0.8; }
+
+/* --- TOAST NOTIFICATION --- */
+#toast {
+    position: fixed;
+    top: -100px; left: 50%;
+    transform: translateX(-50%);
+    background: #ff5252;
+    color: #fff;
+    padding: 12px 25px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 13px;
+    z-index: 10000;
+    transition: 0.5s;
+    white-space: nowrap;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+#toast.show { top: 30px; }
