@@ -1,0 +1,84 @@
+<!DOCTYPE html><html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GLORIAM</title>
+  <style>
+    body { margin:0; font-family: Arial; background:#000; color:#fff; }/* HERO */
+.hero {
+  height:100vh;
+  background:url('https://images.unsplash.com/photo-1523381210434-271e8be1f52b') center/cover no-repeat;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+}
+
+.hero h1 { font-size:40px; letter-spacing:3px; }
+
+.btn {
+  margin-top:20px;
+  padding:12px 25px;
+  background:#fff;
+  color:#000;
+  border:none;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+/* SECTION */
+section { padding:40px 20px; text-align:center; }
+
+.gallery {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
+  gap:10px;
+}
+
+.gallery img {
+  width:100%;
+  border-radius:10px;
+}
+
+footer { text-align:center; padding:20px; font-size:12px; }
+
+  </style>
+</head>
+<body><!-- HERO --><div class="hero">
+  <h1>GLORIAM</h1>
+  <p>Soccer Addict Collection</p>
+  <button class="btn" onclick="order()">ORDER NOW</button>
+</div><!-- GALLERY --><section>
+  <h2>OUR WORK</h2>
+  <div class="gallery">
+    <img src="https://images.unsplash.com/photo-1520975916090-3105956dac38">
+    <img src="https://images.unsplash.com/photo-1503341504253-dff4815485f1">
+    <img src="https://images.unsplash.com/photo-1520975922203-bc5c3b52d5a6">
+    <img src="https://images.unsplash.com/photo-1516826957135-700dedea698c">
+  </div>
+</section><footer>
+  © GLORIAM STORE
+</footer><script>
+function order() {
+  const name = prompt("Nama:");
+  const phone = prompt("No HP:");
+  const address = prompt("Alamat:");
+
+  fetch("URL_GOOGLE_SCRIPT_KAMU", {
+    method: "POST",
+    body: JSON.stringify({
+      name,
+      phone,
+      address,
+      product: "GLORIAM Soccer Addict"
+    })
+  })
+  .then(() => {
+    alert(`Order berhasil!\n\nTransfer ke:\nBCA - 1234567890\nA/N GLORIAM STORE\n\nKirim bukti ke WhatsApp ya!`);
+
+    window.open("https://wa.me/628XXXXXXXXXX?text=Halo saya sudah order GLORIAM");
+  });
+}
+</script></body>
+</html>
