@@ -16,11 +16,11 @@ body{margin:0;font-family:Arial;background:#000;color:#fff}
 
 .btn{margin-top:25px;padding:14px 40px;background:#fff;color:#000;border:none;font-weight:bold;cursor:pointer;border-radius:30px}
 
-.section{padding:70px 20px;text-align:center}
+.section{padding:70px 20px;text-align:center;border-top:1px solid rgba(255,255,255,0.06)}
 
 .form{max-width:420px;margin:auto;text-align:left}
 
-.form label{font-size:12px;font-weight:bold;letter-spacing:2px;opacity:.8}
+.form label{font-size:12px;font-weight:bold;letter-spacing:2px;opacity:.8;margin-top:20px;display:block;border-top:1px solid rgba(255,255,255,0.05);padding-top:15px}
 
 .form input{
  width:100%;padding:14px;margin:12px 0 25px;border:none;border-bottom:1px solid #333;background:transparent;color:#fff;font-size:15px
@@ -41,8 +41,17 @@ body{margin:0;font-family:Arial;background:#000;color:#fff}
 .warna-btn.green.active{background:#1f8f4a;color:#fff;border-color:#1f8f4a}
 
 .payment{
- background:#0d0d0d;padding:18px;border-radius:14px;margin-top:20px;font-size:14px;line-height:1.6;border:1px solid #222
+ background:linear-gradient(145deg,#0a0a0a,#111);
+ padding:22px;
+ border-radius:18px;
+ margin-top:25px;
+ font-size:14px;
+ line-height:1.8;
+ border:1px solid rgba(255,255,255,0.08);
+ box-shadow:0 15px 40px rgba(0,0,0,0.7);
+ font-weight:500
 }
+.payment b{font-size:16px;letter-spacing:1px;font-weight:bold}
 
 .info-box{
  background:linear-gradient(145deg,#0a0a0a,#111);
@@ -89,7 +98,15 @@ body{margin:0;font-family:Arial;background:#000;color:#fff}
 <p class="tag">SOCCER ADDICT COLLECTION</p>
 <button class="btn" onclick="scrollToOrder()">ORDER NOW</button>
 </div><div class="section" id="order">
-<div class="form"><div class="badge">OPEN PREORDER</div><div class="info-box">
+<div class="form"><div style="text-align:center;margin-bottom:30px">
+<div class="badge">FORMAT ORDER</div>
+<h2 style="margin:10px 0 5px;font-size:22px;letter-spacing:2px">SOCCER ADDICT</h2>
+<div style="font-weight:bold;line-height:1.8;font-size:14px">
+Harga: Rp 110.000<br>
+DP Minimal: Rp 60.000<br>
+Batas Pemesanan: 6 April 2026
+</div>
+</div><div class="info-box">
 Harga: Rp 110.000<br>
 DP Minimal: Rp 60.000<br>
 Batas Pemesanan: 6 April 2026
@@ -99,7 +116,7 @@ Batas Pemesanan: 6 April 2026
 
 <div class="warna-group">
 <div class="warna-btn" onclick="selectWarna(this,'Hitam')">Hitam</div>
-<div class="warna-btn green" onclick="selectWarna(this,'Putih')">Putih</div>
+<div class="warna-btn green" onclick="selectWarna(this,'Hijau')">Hijau</div>
 </div><label>SIZE</label> <img class="size-img" src="https://raw.githubusercontent.com/gloriammakestand/Gloriam/main/size.jpg">
 
 <div class="size-group">
