@@ -36,7 +36,7 @@ async function fetchProducts() {
 }
 
 function renderAllSections() { // Merubah untuk id yang ditampilkan 
-    renderList(products.filter(p => [1, 2, 3, 4, 5].includes(p.id)), 'list-home');
+    renderList(products.filter(p => [1, 2, 3].includes(p.id)), 'list-home');
     renderList(products.filter(p => p.badge === 'pre'), 'list-preorder');
     renderList(products.filter(p => p.badge === 'ready'), 'list-katalog');
     renderList(products.filter(p => p.badge === 'sold'), 'list-arsip');
