@@ -52,6 +52,21 @@
 </head>
 <body>
 
+<!-- HAMBURGER -->
+<div class="hamburger" onclick="toggleMenu()">
+    ☰
+</div>
+
+<!-- SIDEBAR MENU -->
+<div id="sidebar" class="sidebar">
+    <div class="close-btn" onclick="toggleMenu()">✕</div>
+    <a onclick="filterMenu('home')">BERANDA</a>
+    <a onclick="filterMenu('preorder')">PRE ORDER</a>
+    <a onclick="filterMenu('ready')">KATALOG</a>
+    <a onclick="filterMenu('sold')">ARSIP</a>
+    <a onclick="filterMenu('about')">TENTANG KAMI</a>
+</div>
+
     <div class="loader" id="loader">
     <img src="https://69c19e4422589ee00d527177.imgix.net/loading/Tak%20berjudul37_20260320012236_20260324203721.png?w=800&h=800&fit=crop&q=95" alt="Logo Gloriam">
 </div>
