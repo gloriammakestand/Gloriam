@@ -156,12 +156,12 @@ button { background: #fff; color: #000; border: none; padding: 20px; width: 100%
 }
 
 /* HAMBURGER MENU */
-/* 1. TOMBOL MENU (PINDAH KE KANAN ATAS) */
+/* 1. TOMBOL MENU (DI KANAN ATAS) */
 .menu-btn {
     position: fixed; 
     top: 25px; 
-    right: 20px; /* Di kanan agar tidak menutupi judul di kiri */
-    left: auto;
+    right: 20px; 
+    left: auto; /* Memastikan tidak di kiri */
     z-index: 1100; 
     cursor: pointer; 
     display: flex; 
@@ -175,11 +175,11 @@ button { background: #fff; color: #000; border: none; padding: 20px; width: 100%
 
 .menu-btn span { width: 22px; height: 2px; background: #fff; transition: 0.3s; }
 
-/* 2. SIDE MENU (MUNCUL DARI KANAN) */
+/* 2. SIDE MENU (SLIDE DARI KANAN) */
 #side-menu {
     position: fixed; 
     top: 0; 
-    right: -100%; /* Mulai dari luar layar kanan */
+    right: -100%; 
     left: auto;
     width: 280px; 
     height: 100%;
@@ -191,74 +191,44 @@ button { background: #fff; color: #000; border: none; padding: 20px; width: 100%
 }
 
 #side-menu.active { 
-    right: 0; /* Geser masuk ke kanan */
+    right: 0; 
 }
 
-/* 3. LAYOUT JUDUL & BACK (DI KIRI ATAS - BERSIH) */
+/* 3. LAYOUT NAVIGASI (KIRI ATAS) */
 .category-nav-wrapper {
     width: 100%;
     max-width: 450px;
-    padding: 20px 0 30px 0; /* Padding normal karena menu sudah pindah ke kanan */
+    padding: 20px 0 30px 0; 
     text-align: left;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
 }
 
-.btn-back-link {
+.btn-back-home {
     cursor: pointer;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    opacity: 0.5;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    opacity: 0.4;
     text-transform: uppercase;
     transition: 0.3s;
-    display: inline-block;
+    margin-bottom: 12px;
 }
-
-.btn-back-link:hover { opacity: 1; }
 
 .category-main-title {
     margin: 0;
-    font-size: 26px;
-    letter-spacing: 6px;
+    font-size: 28px;
+    letter-spacing: 8px;
     font-weight: 900;
     text-transform: uppercase;
     color: #fff;
 }
 
-/* 4. PENYESUAIAN LAINNYA */
-#product-list {
-    padding-top: 10px; 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.close-btn { 
-    position: absolute; 
-    top: 25px; 
-    right: 25px; 
-    font-size: 24px; 
-    cursor: pointer; 
-    opacity: 0.5; 
-}
-
-/* Back Button untuk halaman Detail, Form, dll tetap di kiri */
-.back-btn { 
-    position: fixed;
-    left: 20px; 
-    top: 25px; 
-    z-index: 150;
-}
+/* 4. PENYESUAIAN TAMBAHAN */
+.close-btn { position: absolute; top: 25px; right: 25px; font-size: 24px; cursor: pointer; opacity: 0.5; }
 
 .menu-items a {
-    display: block; 
-    padding: 20px 30px; 
-    color: #fff; 
-    text-decoration: none;
-    font-size: 12px; 
-    font-weight: 700; 
-    letter-spacing: 2px; 
-    border-bottom: 1px solid #0a0a0a;
+    display: block; padding: 20px 30px; color: #fff; text-decoration: none;
+    font-size: 12px; font-weight: 700; letter-spacing: 2px; border-bottom: 1px solid #0a0a0a;
 }
