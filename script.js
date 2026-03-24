@@ -126,3 +126,17 @@ function openSpecs() {
 function closeSpecs() { 
     document.getElementById('specsModal').style.display = 'none'; 
 }
+
+function toggleMenu() {
+    vibrate(20);
+    document.getElementById('sidebar').classList.toggle('active');
+}
+
+document.addEventListener('click', function(e) {
+    const sidebar = document.getElementById('sidebar');
+    const hamburger = document.querySelector('.hamburger');
+
+    if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+        sidebar.classList.remove('active');
+    }
+});
