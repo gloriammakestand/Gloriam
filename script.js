@@ -145,7 +145,13 @@ function triggerAlert(msg) {
     setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
-function validateDetail() { vibrate(40); if (!cart.color || !cart.size) return triggerAlert("PILIH WARNA & UKURAN!"); showPage('form'); }
+function validateDetail() {
+    if (!cart.color && !cart.size) return triggerAlert("PILIH WARNA & UKURAN!");
+    if (!cart.color) return triggerAlert("PILIH WARNA!");
+    if (!cart.size) return triggerAlert("PILIH UKURAN!");
+    vibrate(40);
+    showPage('form');
+}
 function validateForm() { vibrate(40);
     const n = document.getElementById('inName').value, p = document.getElementById('inPhone').value, a = document.getElementById('inAddress').value;
     if(!n || !p || !a) return triggerAlert("LENGKAPI DATA!");
