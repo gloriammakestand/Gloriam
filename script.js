@@ -117,9 +117,21 @@ function goDetail(id) {
 }
 
 function selOpt(type, val, el) { vibrate(20); cart[type] = val; el.parentElement.querySelectorAll('div').forEach(d => d.classList.remove('active')); el.classList.add('active'); }
-function triggerAlert(msg) { vibrate([50, 50]); const t = document.getElementById('toast'); t.innerText = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
-function validateDetail() { if (!cart.color || !cart.size) return triggerAlert("PILIH WARNA & UKURAN!"); showPage('form'); }
-function validateForm() {
+function triggerAlert(msg) {
+    // Getar: 50ms, diam 50ms, getar 50ms (pola error)
+    vibrate([50, 50, 50]); 
+    const toast = document.getElementById('toast');
+    toast.innerText = msg;
+    toast.classList.add('show', 'shake');
+    
+    // Hapus efek goyang setelah 0.4 detik
+    setTimeout(() => toast.classList.remove('shake'), 400);
+    // Sembunyikan toast setelah 2.5 detik
+    setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+function validateDetail() { vibrate(40); if (!cart.color || !cart.size) return triggerAlert("PILIH WARNA & UKURAN!"); showPage('form'); }
+function validateForm() { vibrate(40);
     const n = document.getElementById('inName').value, p = document.getElementById('inPhone').value, a = document.getElementById('inAddress').value;
     if(!n || !p || !a) return triggerAlert("LENGKAPI DATA!");
     document.getElementById('sumProd').innerText = cart.prod.name;
@@ -128,7 +140,7 @@ function validateForm() {
     document.getElementById('sumCust').innerHTML = `<strong>${n}</strong><br>${p}<br>${a}`;
     showPage('summary');
 }
-function sendWA() {
+function sendWA() { vibrate(40);
     const n = document.getElementById('inName').value, p = document.getElementById('inPhone').value, a = document.getElementById('inAddress').value;
     const text = `*GLORIAM ORDER*\n\n${cart.prod.name}\nWarna: ${cart.color}\nSize: ${cart.size}\nTotal: Rp${cart.prod.price}\n\n*Data Pengiriman*\nNama: ${n}\nWhatsApp: ${p}\nAlamat: ${a}`;
     window.open(`https://wa.me/6283898588562?text=${encodeURIComponent(text)}`);
