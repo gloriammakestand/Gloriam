@@ -25,28 +25,53 @@ async function fetchProducts() {
                 specs: col[10] // <--- Tambahkan koma di baris atasnya, lalu tambah baris ini
             };
         });
-        renderHome();
+                // Ganti baris RenderHome(); yang lama menjadi ini:
+        renderProducts('home');
     } catch (err) { console.error(err); }
 }
 
-function renderHome() {
+// INI FUNGSI BARUNYA (PENGGANTI renderHome)
+function renderProducts(type = 'home') {
     const container = document.getElementById('product-list');
     container.innerHTML = '';
-    products.forEach(p => {
-        const isSold = p.badge === 'sold';
-        container.innerHTML += `
-            <div class="card ${isSold ? 'sold-out' : ''}">
-                <div class="badge ${p.badge}">${p.status}</div>
-                <img src="${p.imgs[0]}">
-                <div style="padding:25px">
-                    <h3>${p.name}</h3>
-                    <p style="opacity:0.5; font-weight:600;">${isSold ? 'OUT OF STOCK' : 'Rp' + p.price}</p>
-                    <button onclick="vibrate(40); goDetail(${p.id})" ${isSold ? 'disabled' : ''}>${isSold ? 'HABIS' : 'SELECT'}</button>
+    
+    // Pastikan balik ke halaman home
+    showPage('home');
+    
+    // Tutup menu kalau terbuka
+    if(document.getElementById('side-menu') && document.getElementById('side-menu').classList.contains('active')) {
+        toggleMenu();
+    }
+
+    products.forEach((p, index) => {
+        let isShow = false;
+        const statusClean = p.badge.toLowerCase();
+
+        // LOGIKA FILTER:
+        if (type === 'home' && index < 3) isShow = true; // Hanya 3 teratas untuk Beranda
+        else if (type === 'preorder' && (statusClean === 'pre' || statusClean === 'po')) isShow = true;
+        else if (type === 'katalog' && statusClean === 'ready') isShow = true;
+        else if (type === 'arsip' && statusClean === 'sold') isShow = true;
+
+        if (isShow) {
+            const isSold = statusClean === 'sold';
+            container.innerHTML += `
+                <div class="card ${isSold ? 'sold-out' : ''}">
+                    <div class="badge ${p.badge}">${p.status}</div>
+                    <img src="${p.imgs[0]}">
+                    <div style="padding:25px">
+                        <h3>${p.name}</h3>
+                        <p style="opacity:0.5; font-weight:600;">${isSold ? 'OUT OF STOCK' : 'Rp' + p.price}</p>
+                        <button onclick="vibrate(40); goDetail(${p.id})" ${isSold ? 'disabled' : ''}>${isSold ? 'HABIS' : 'SELECT'}</button>
+                    </div>
                 </div>
-            </div>
-        `;
+            `;
+        }
     });
+    
+    document.getElementById('home').scrollTop = 0;
 }
+
 
 function showPage(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
