@@ -93,6 +93,14 @@ function showPage(id) {
 
 function goDetail(id) {
     const p = products.find(x => x.id === id);
+// TAMBAHKAN BARIS INI supaya sidebar tertutup saat klik produk
+    if (document.getElementById('sidebar').classList.contains('open')) {
+        toggleSidebar();
+    }
+
+    cart = { prod: p, size: '', color: p.colors.length === 1 ? p.colors[0] : '' };
+    
+    // ... sisa kode lainnya (detName, detPrice, dll) ...
     cart = { prod: p, size: '', color: p.colors.length === 1 ? p.colors[0] : '' };
     document.getElementById('detName').innerText = p.name;
     document.getElementById('detPrice').innerText = 'Rp' + p.price;
