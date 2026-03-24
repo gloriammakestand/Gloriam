@@ -2,7 +2,13 @@ const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR5wyzEXxKbCe
 let products = [];
 let cart = { prod: null, size: '', color: '' };
 
-function vibrate(ms) { if (navigator.vibrate) navigator.vibrate(ms); }
+function vibrate(ms) { 
+    if (navigator.vibrate) {
+        // Ini akan otomatis menangani baik angka tunggal (40) 
+        // maupun array ([50, 50, 50])
+        navigator.vibrate(ms); 
+    } 
+}
 
 window.onload = async () => {
     await fetchProducts();
@@ -60,12 +66,21 @@ function injectFooters() {
     const footerHTML = `
         <footer>
             <div class="footer-logo">GLORIAM</div>
+            <div class="footer-slogan">MAKE STAND WITH PRIDE</div>
             <div class="footer-socials">
-                <a href="https://www.instagram.com/gloriam____" target="_blank"><i class="fab fa-instagram"></i></a>
-                <a href="https://wa.me/6283898588562" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                <a href="https://www.instagram.com/gloriam____?igsh=d2Z5dTFiMHdxMHgy" target="_blank" onclick="vibrate(30)"><i class="fab fa-instagram"></i></a>
+                <a href="https://wa.me/6283898588562" target="_blank" onclick="vibrate(30)"><i class="fab fa-whatsapp"></i></a>
+                <a href="https://shopee.co.id/gloriam__" target="_blank" onclick="vibrate(30)"><i class="fas fa-shopping-bag"></i></a>
+            </div>
+            <div class="footer-contact-title">KONTAK KAMI :</div>
+            <div class="footer-contact-info">
+                WhatsApp : <a href="https://wa.me/6283898588562">083898588562</a><br>
+                Email : <a href="mailto:gloriammakestand@gmail.com">gloriammakestand@gmail.com</a>
             </div>
             <p class="copyright">© 2026 Gloriam Store. All rights reserved.</p>
         </footer>`;
+
+    // Daftar ID footer yang ada di HTML kamu
     ['home', 'pre', 'kat', 'ars', 'about'].forEach(id => {
         const el = document.getElementById(`footer-${id}`);
         if(el) el.innerHTML = footerHTML;
