@@ -30,15 +30,10 @@ async function fetchProducts() {
 }
 
 function renderAllSections() {
-    // Beranda: Ambil ID 1, 2, 3
     renderList(products.filter(p => [1, 2, 3].includes(p.id)), 'list-home');
-    // Pre Order: badge 'pre'
     renderList(products.filter(p => p.badge === 'pre'), 'list-preorder');
-    // Katalog: badge 'ready'
     renderList(products.filter(p => p.badge === 'ready'), 'list-katalog');
-    // Arsip: badge 'sold'
     renderList(products.filter(p => p.badge === 'sold'), 'list-arsip');
-
     injectFooters();
 }
 
@@ -72,7 +67,7 @@ function injectFooters() {
             <p class="copyright">© 2026 Gloriam Store. All rights reserved.</p>
         </footer>`;
     ['home', 'pre', 'kat', 'ars', 'about'].forEach(id => {
-        const el = document.getElementById(`footer-${id === 'about' ? 'about' : id === 'home' ? 'home' : id === 'pre' ? 'pre' : id === 'kat' ? 'kat' : 'ars'}`);
+        const el = document.getElementById(`footer-${id}`);
         if(el) el.innerHTML = footerHTML;
     });
 }
@@ -86,35 +81,28 @@ function toggleSidebar() {
 function navTo(pageId) { toggleSidebar(); showPage(pageId); }
 
 function showPage(id) {
-    // Sembunyikan atau munculkan tombol hamburger berdasarkan halaman
     const menuBtn = document.querySelector('.menu-btn');
     if (id === 'detail' || id === 'form' || id === 'summary') {
-        menuBtn.style.display = 'none'; // Hilangkan di halaman detail/order
+        menuBtn.style.display = 'none';
     } else {
-        menuBtn.style.display = 'flex'; // Munculkan kembali di home/katalog/arsip
+        menuBtn.style.display = 'flex';
     }
-
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     document.getElementById(id).scrollTop = 0;
 }
 
-
 function goDetail(id) {
     const p = products.find(x => x.id === id);
-// TAMBAHKAN BARIS INI supaya sidebar tertutup saat klik produk
     if (document.getElementById('sidebar').classList.contains('open')) {
         toggleSidebar();
     }
+    cart = { prod: p, size: '', color: p.colors.length === 1 ? p.colors[0] : '' };
 
-    cart = { prod: p, size: '', color: p.colors.length === 1 ? p.colors[0] : '' };
-    
-    // ... sisa kode lainnya (detName, detPrice, dll) ...
-    cart = { prod: p, size: '', color: p.colors.length === 1 ? p.colors[0] : '' };
     document.getElementById('detName').innerText = p.name;
     document.getElementById('detPrice').innerText = 'Rp' + p.price;
     document.getElementById('detImgs').innerHTML = p.imgs.slice(1).map(i => `<img src="${i}">`).join('');
-    
+
     let cHTML = `<div class="section-label">PILIH WARNA</div><div class="option-box">`;
     p.colors.forEach(c => cHTML += `<div class="${cart.color === c ? 'active' : ''}" onclick="selOpt('color','${c}',this)">${c}</div>`);
     document.getElementById('colorArea').innerHTML = cHTML + `</div>`;
